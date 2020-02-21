@@ -38,8 +38,10 @@ class Pengajuan extends Model
     public static function getStatusPengajuan($noCif) {
         $query = DB::table('pengajuan_perhiasans')
             ->join('status_pengajuan', 'pengajuan_perhiasans.id_status', '=', 'status_pengajuan.id_status')
+            ->leftJoin('user_penaksirs', 'pengajuan_perhiasans.id_penaksir', '=', 'user_penaksirs.id')
             ->where('no_cif', $noCif)
             ->where('is_complete', 0)
+            ->select('pengajuan_perhiasans.*', 'status_pengajuan.*', 'user_penaksirs.name as nama_penaksir')
             ->get()
             ->first();
 

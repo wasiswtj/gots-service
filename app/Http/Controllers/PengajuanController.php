@@ -37,7 +37,7 @@ class PengajuanController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($this->sendResponse('99', 'error', $validator->errors(), ''));
+            return response()->json($this->sendResponse('99', 'error', $validator->errors(), ''), 422);
         }
         
         // Get user Data
