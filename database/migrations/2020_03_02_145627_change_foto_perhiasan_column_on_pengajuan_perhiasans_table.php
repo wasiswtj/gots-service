@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStatusPengajuanTable extends Migration
+class ChangeFotoPerhiasanColumnOnPengajuanPerhiasansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,7 @@ class CreateStatusPengajuanTable extends Migration
      */
     public function up()
     {
-        Schema::create('status_pengajuan', function (Blueprint $table) {
-            $table->string('id_status')->primary();
-            $table->string('status');
-        });
+        DB::statement('ALTER TABLE pengajuan_perhiasans MODIFY foto_perhiasan MEDIUMTEXT;');
     }
 
     /**
@@ -26,6 +23,6 @@ class CreateStatusPengajuanTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('status_pengajuan');
+        DB::statement('ALTER TABLE pengajuan_perhiasans MODIFY foto_perhiasan TEXT;');
     }
 }

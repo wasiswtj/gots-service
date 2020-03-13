@@ -33,7 +33,9 @@ class PengajuanController extends Controller
             'berat_kotor' => 'required',
             'berat_bersih' => 'required',
             'keterangan_barang' => 'required',
-            'foto_perhiasan' => 'required'
+            'foto_perhiasan' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -46,11 +48,33 @@ class PengajuanController extends Controller
         // Get post data
         $data = $request->all();
 
+        // Mengecek apakah terdapat pengajuan yang masih berjalan
+        $valPngjnBerjalan = $pengajuanService->getStatusPengajuan($user['no_cif']);
+        if ($valPngjnBerjalan) {
+            return response()->json($this->sendResponse('99', 'error', 'Maaf anda masih memiliki pengajuan yang belum diselesaikan', ''));
+        }
+
+        // Mengecek lokasi tidak lebih dari 5km
+        $validasiJarak = $pengajuanService->validasiJarak($data['latitude'], $data['longitude']);
+        if (!$validasiJarak) {
+            return response()->json($this->sendResponse('99', 'error', 'Maaf layanan gade on the spot belum dapat menjangkau lokasi anda', ''));
+        }
+
         // Mendapatkan harga HPS
         $hps = $pengajuanService->getHpsPerhiasan($data['jenis_perhiasan'], $data['kadar']);
         if (!$hps) {
-            return response()->json($this->sendResponse('99', 'error', 'Gagal mengambil data hps.', ''));
+            return response()->json($this->sendResponse('99', 'error', 'Gagal mengambil data hps', ''));
         }
+
+        // Mengecek minimal gadai
+        $valMinGadai = $pengajuanService->validasiMinimalGadai($data['berat_bersih'], $hps->harga_per_gram);
+        if (!$valMinGadai) {
+            return response()->json($this->sendResponse('99', 'error', 'Maaf layanan gade on the spot hanya dapat dilakukan untuk transaksi lebih besar dari Rp 20.000.000', ''));
+        }
+
+        // Mendapatkan unique indetifier
+        $id = hexdec(uniqid());
+        $data{'no_pengajuan'} = $id;
 
         // Menginsert row tabel pengajuan perhiasan, mengisi perkiraan harga sesuai hps
         $query = $pengajuanService->insertPengajuanPerhiasan($user, $data, $hps);
@@ -74,6 +98,23 @@ class PengajuanController extends Controller
         return response()->json($this->sendResponse('00', 'success', 'Data pengajuan berhasil diambil', $dataPengajuan));
     }
 
+
+    public function getPerkiraanHargaPerhiasan(Request $request, PengajuanService $pengajuanService) {
+        // Get data user
+        $user = Auth::guard('api')->user();
+
+        // Get param data
+        $data = $request->all();
+
+        // Mendapatkan perkiraan harga perhiasan
+        $dataPerkiraanHarga = $pengajuanService->getPerkiraanHargaPerhiasan($data);
+        if (!$dataPerkiraanHarga) {
+            return response()->json($this->sendResponse('99', 'error', 'Gagal data perkiraan harga perhiasan', ''));
+        }
+
+        return response()->json($this->sendResponse('00', 'success', 'Data perkiraan harga perhiasan berhasil diambil', $dataPerkiraanHarga));
+    }
+
     public function getStatusPengajuan(Request $request, PengajuanService $pengajuanService) {
         // Get data user
         $user = Auth::guard('api')->user();
@@ -82,6 +123,11 @@ class PengajuanController extends Controller
         $dataPengajuan = $pengajuanService->getStatusPengajuan($user['no_cif']);
         if (!$dataPengajuan) {
             return response()->json($this->sendResponse('99', 'error', 'Data pengajuan tidak tersedia', ''));
+        }
+
+        if ($dataPengajuan->latitude && $dataPengajuan->longitude && $dataPengajuan->cabang_latitude && $dataPengajuan->cabang_longitude) {
+            $estimasiJarak = $pengajuanService->getEstimasiJarak($dataPengajuan->latitude, $dataPengajuan->longitude, $dataPengajuan->cabang_latitude, $dataPengajuan->cabang_longitude);
+            $dataPengajuan->{'estimasi_perjalanan'} = $pengajuanService->getEstimasiPerjalanan($estimasiJarak);
         }
 
         return response()->json($this->sendResponse('00', 'success', 'Data pengajuan berhasil diambil', $dataPengajuan));

@@ -28,6 +28,15 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('pengajuan', 'PengajuanController@pengajuanPerhiasan');
     $router->get('pengajuan_phs_unconfirmed', 'PengajuanController@getPengajuanPerhiasanUnconfirmed');
     $router->get('status_pengajuan', 'PengajuanController@getStatusPengajuan');
+    $router->get('perkiraan_harga_perhiasan', 'PengajuanController@getPerkiraanHargaPerhiasan');
+
+    // Transaksi gadai perhiasan
+    $router->get('transaksi_berjalan', 'TransaksiController@getTransaksiBerjalan');
+    $router->get('transaksi_berjalan/{id}', 'TransaksiController@getSingleTransaksiBerjalan');
+    $router->get('riwayat', 'TransaksiController@getRiwayat');
+    $router->get('riwayat/{id}', 'TransaksiController@getSingleRiwayat');
+    
+
 });
 
 // API penaksir route group

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateHpsPerhiasansTable extends Migration
+class CreateSuratBuktiKreditsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateHpsPerhiasansTable extends Migration
      */
     public function up()
     {
-        Schema::create('hps_perhiasans', function (Blueprint $table) {
+        Schema::create('surat_bukti_kredits', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('jenis_perhiasan');
-            $table->string('kadar');
-            $table->double('harga_per_gram', 12, 2);
-            $table->date('created_at');
-            $table->date('updated_at');
+            $table->string('uri');
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
@@ -30,6 +28,6 @@ class CreateHpsPerhiasansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hps_perhiasans');
+        Schema::dropIfExists('surat_bukti_kredits');
     }
 }

@@ -37,11 +37,16 @@ class Pengajuan extends Model
 
     public static function getStatusPengajuan($noCif) {
         $query = DB::table('pengajuan_perhiasans')
+            ->join ('users', 'pengajuan_perhiasans.id_user' , '=', 'users.id')
             ->join('status_pengajuan', 'pengajuan_perhiasans.id_status', '=', 'status_pengajuan.id_status')
             ->leftJoin('user_penaksirs', 'pengajuan_perhiasans.id_penaksir', '=', 'user_penaksirs.id')
-            ->where('no_cif', $noCif)
+            ->leftJoin('cabangs', 'user_penaksirs.id_cabang', '=', 'cabangs.id')
+            ->where('pengajuan_perhiasans.no_cif', $noCif)
             ->where('is_complete', 0)
-            ->select('pengajuan_perhiasans.*', 'status_pengajuan.*', 'user_penaksirs.name as nama_penaksir')
+            ->select('pengajuan_perhiasans.*', 'status_pengajuan.*', 'user_penaksirs.name as nama_penaksir',
+            'user_penaksirs.no_nik as no_nik_penaksir', 'user_penaksirs.no_handphone as no_handphone_penaksir',  
+            'cabangs.alamat as alamat_cabang', 'cabangs.longitude as cabang_longitude', 'cabangs.latitude as cabang_latitude', 
+            'cabangs.nama_outlet', 'cabangs.telepon as no_telepon_cabang', 'users.name as nama_nasabah')
             ->get()
             ->first();
 
@@ -86,6 +91,12 @@ class Pengajuan extends Model
             ->where('no_pengajuan', $no_pengajuan)
             ->get()
             ->first();
+
+        return $query;
+    }
+
+    public static function getAllCabang() {
+        $query = DB::table('cabangs')->get();
 
         return $query;
     }

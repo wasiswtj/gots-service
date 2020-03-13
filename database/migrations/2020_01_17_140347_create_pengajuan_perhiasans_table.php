@@ -16,6 +16,7 @@ class CreatePengajuanPerhiasansTable extends Migration
         Schema::create('pengajuan_perhiasans', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('no_pengajuan');
+            $table->timestamp('tanggal_pengajuan');
             $table->string('no_cif');
             $table->string('jenis_perhiasan');
             $table->string('kadar');
@@ -23,19 +24,27 @@ class CreatePengajuanPerhiasansTable extends Migration
             $table->double('berat_bersih', 8,4);
             $table->double('perkiraan_harga', 12,2);
             $table->double('harga_taksir',12,2)->nullable();
-            $table->string('id_hps');
+            $table->unsignedBigInteger('id_hps');
             $table->string('keterangan_barang');
-            $table->string('titik_gadai')->nullable();
+            $table->string('alamat');
+            $table->string('latitude');
+            $table->string('longitude');
             $table->string('provinsi')->nullable();
             $table->string('kabupaten')->nullable();
             $table->string('kecamatan')->nullable();
             $table->string('kelurahan')->nullable();
             $table->text('foto_perhiasan');
-            $table->string('id_status');
-            $table->string('id_penaksir')->nullable();
+            $table->unsignedBigInteger('id_status');
+            $table->unsignedBigInteger('id_penaksir')->nullable();
+            $table->unsignedBigInteger('id_user');
             $table->string('is_complete')->nullable();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->nullable();
+
+            // foreign key
+            $table->foreign('id_hps')->references('id')->on('hps_perhiasans');
+            $table->foreign('id_penaksir')->references('id')->on('user_penaksirs');
+            $table->foreign('id_user')->references('id')->on('users');
         });
     }
 

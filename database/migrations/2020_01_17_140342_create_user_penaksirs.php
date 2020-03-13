@@ -18,8 +18,11 @@ class CreateUserPenaksirs extends Migration
             $table->string('name');
             $table->string('no_nik')->unique()->notNullable();
             $table->string('password');
-            $table->string('id_cabang');
+            $table->unsignedBigInteger('id_cabang');
             $table->timestamps();
+
+            // foreign key
+            $table->foreign('id_cabang')->references('id')->on('cabangs');
         });
     }
 
