@@ -36,7 +36,7 @@ class Transaksi extends Model
                 'pp.keterangan_barang', 'ss.uri as uri_struk', 'sbk.uri as uri_sbk', 
                 'user_penaksirs.name as nama_penaksir',
                 'user_penaksirs.no_nik as no_nik_penaksir', 'user_penaksirs.no_handphone as no_handphone_penaksir', 
-                'users.name as nama_nasabah',  
+                'users.name as nama_nasabah', 'pp.alamat as alamat_nasabah',  
                 'cabangs.alamat as alamat_cabang', 'cabangs.longitude as cabang_longitude', 'cabangs.latitude as cabang_latitude', 
                 'cabangs.nama_outlet', 'cabangs.telepon as no_telepon_cabang', 'pp.foto_perhiasan')
             ->get()
@@ -68,7 +68,7 @@ class Transaksi extends Model
             ->select('tp.*', 'pp.jenis_perhiasan', 'pp.kadar', 'pp.berat_kotor', 'pp.berat_bersih', 'pp.keterangan_barang', 
             'user_penaksirs.name as nama_penaksir',
             'user_penaksirs.no_nik as no_nik_penaksir', 'user_penaksirs.no_handphone as no_handphone_penaksir', 
-            'users.name as nama_nasabah', 
+            'users.name as nama_nasabah', 'pp.alamat as alamat_nasabah',
             'cabangs.alamat as alamat_cabang', 'cabangs.longitude as cabang_longitude', 'cabangs.latitude as cabang_latitude', 
             'cabangs.nama_outlet', 'cabangs.telepon as no_telepon_cabang','pp.foto_perhiasan')
             ->get()
