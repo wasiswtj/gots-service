@@ -24,7 +24,7 @@ class CreateTransaksiPerhiasansTable extends Migration
             $table->double('biaya_asuransi', 12,2);
             $table->double('biaya_perjalanan', 12,2);
             $table->double('jumlah_diterima', 12,2);
-            $table->enum('status_transaksi', ['aktif', 'lunas', 'perpanjang', 'lelang', 'selesai']);
+            $table->enum('status_transaksi', ['pencairan dana', 'aktif', 'lunas', 'perpanjang', 'lelang', 'selesai']);
             $table->timestamp('tanggal_gadai')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->integer('masa_gadai')->nullable();
             $table->integer('masa_perpanjang')->nullable();
